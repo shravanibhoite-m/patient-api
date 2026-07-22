@@ -1,7 +1,7 @@
 from patient_db import db_connection
-from services import get_patient,get_all_patients,create_patient,updated_patient_resource
+from services import get_patient,get_all_patients,create_patient,updated_patient_resource,update_patient_record,delete_patient
 from pydantic import BaseModel,Field,field_validator,EmailStr
-from fastapi import FastAPI,HTTPException
+from fastapi import Body, FastAPI,HTTPException
 from enum import Enum
 from typing import Optional
 from fastapi_pagination import Page, add_pagination, paginate
@@ -56,10 +56,21 @@ class PatientCreate(BaseModel):
     city: str
     pincode: int=Field(ge=100000,le=999999)
 
+class PatientUpdate(BaseModel):
+     name:Optional[str]=None
+     age:Optional[int]=Field(default=None,ge=0,le=150)
+     email:Optional[EmailStr]=None
+     phone_num:Optional[str]=None
+     active:Optional[bool]=None
+     blood_group:Optional[Bloodgroup]=None
+     emergency_contact:Optional[str]=None
+     city:Optional[str]=None
+     pincode:Optional[int]=Field(default=None,ge=100000,le=999999)
+
 @app.get("/patients/{patient_id}")
 def get_patient_by_id(patient_id:int):
     patient=get_patient(conn,patient_id)
-    if patient_id is None:
+    if patient is None:
         raise HTTPException(status_code=404,detail="patient not found")
     return patient
 
@@ -71,7 +82,8 @@ add_pagination(app)
 
 @app.post("/patients",status_code=201)
 def insert_patient(patient:PatientCreate):
-    create_patient(conn,patient.model_dump())
+    result=create_patient(conn,patient.model_dump())
+    return result
     
 @app.put("/patients/{patient_id}")
 def update_patient(patient_id:int,patient:PatientCreate):
@@ -79,5 +91,24 @@ def update_patient(patient_id:int,patient:PatientCreate):
     if rows_affected==0:
         raise HTTPException(status_code=404,detail="patient not found")
     return "patient updated successfully.."
-    
-    
+
+@app.patch("/patients/{patient_id}")
+def update_patient_field(
+    patient_id: int,
+    patient: Optional[PatientUpdate] = Body(default_factory=PatientUpdate)
+):
+    updated_data = patient.model_dump(exclude_unset=True)
+
+    if not updated_data:
+        raise HTTPException(status_code=400, detail="No fields provided")
+
+    result = update_patient_record(conn, patient_id, updated_data)
+    if result is None:
+        raise HTTPException(status_code=404, detail="patient not found")
+    return result
+@app.delete("/patients/{patient_id}")
+def delete_patient_by_id(patient_id:int):
+    rows_affected=delete_patient(conn,patient_id)
+    if rows_affected==0:
+        raise HTTPException(status_code=404,detail="patient not found")
+    return "patient deleted successfully.."
