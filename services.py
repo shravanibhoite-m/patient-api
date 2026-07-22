@@ -5,6 +5,7 @@ def get_patient(conn,patient_id):
     patient=cursor.fetchone()
     cursor.close()
     return patient
+
 #get all patients from db
 def get_all_patients(conn):
     cursor=conn.cursor(dictionary=True)
@@ -12,6 +13,7 @@ def get_all_patients(conn):
     patients=cursor.fetchall()
     cursor.close()
     return patients
+
 # add new patient
 def create_patient(conn, patient: dict):
     cursor = conn.cursor()
