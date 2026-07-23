@@ -1,5 +1,5 @@
-from fastapi import Body, FastAPI,HTTPException
-from fastapi_pagination import Page, add_pagination, paginate
+from fastapi import  FastAPI
+from fastapi_pagination import add_pagination
 from dotenv import load_dotenv
 from Routes import router
 

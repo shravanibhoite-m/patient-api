@@ -21,19 +21,19 @@ def get_patients():
     return paginate(patients)
 
 
-@router.post("/patients",status_code=201)
+@router.post("/patients",status_code=201,response_model=PatientOut)
 def insert_patient(patient:PatientCreate):
     result=create_patient(conn,patient.model_dump())
     return result
     
-@router.put("/patients/{patient_id}")
+@router.put("/patients/{patient_id}",response_model=PatientOut)
 def update_patient(patient_id:int,patient:PatientCreate):
     rows_affected=updated_patient_resource(conn,patient_id,patient)
     if rows_affected==0:
         raise HTTPException(status_code=404,detail="patient not found")
     return "patient updated successfully.."
 
-@router.patch("/patients/{patient_id}")
+@router.patch("/patients/{patient_id}",response_model=PatientOut)
 def update_patient_field(
     patient_id: int,
     patient: Optional[PatientUpdate] = Body(default_factory=PatientUpdate)
