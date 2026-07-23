@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException, Body
 from fastapi_pagination import Page, paginate
 from typing import Optional
-from patient_db import db_connection
+from db import db_connection
 from services import get_patient, get_all_patients, create_patient, updated_patient_resource, update_patient_record,delete_patient
 from schemas import PatientCreate, PatientOut, PatientUpdate
 
 router = APIRouter()
 conn = db_connection()
 
-@router.get("/patients/{patient_id}")
+@router.get("/patients/{patient_id}", response_model=PatientOut)
 def get_patient_by_id(patient_id:int):
     patient=get_patient(conn,patient_id)
     if patient is None:

@@ -1,7 +1,7 @@
 from fastapi import  FastAPI
 from fastapi_pagination import add_pagination
 from dotenv import load_dotenv
-from Routes import router
+from routes import router
 
 load_dotenv()
 

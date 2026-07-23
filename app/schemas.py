@@ -1,6 +1,7 @@
-from pydantic import BaseModel,Field,field_validator,EmailStr
+from pydantic import BaseModel,Field,EmailStr
 from enum import Enum
 from typing import Optional
+
 class Bloodgroup(str,Enum):
     A_POS = "A+"
     A_NEG = "A-"
