@@ -1,3 +1,4 @@
+from logger import logger
 #get a patient info by id
 def get_patient(conn,patient_id):
     cursor=conn.cursor(dictionary=True)
@@ -37,19 +38,27 @@ def create_patient(conn, patient: dict):
     conn.commit()
     new_id = cursor.lastrowid
     cursor.close()
-    return new_id
+    return  get_patient(conn, new_id)
+
 #update patient resource
-def updated_patient_resource(conn,patient_id,patient):
+def updated_patient_resource(conn,patient_id,patient_data):
     cursor=conn.cursor()
-    update_query="""UPDATE patients SET name=%s,age=%s,gender=%s,email=%s,phone_num=%s,password=%s,active=%s,blood_group=%s,emergency_contact=%s,city=%s,pincode=%s WHERE id=%s """
-    values = (patient.name, patient.age, patient.gender, patient.email, patient.phone_num,
-          patient.password, patient.active, patient.blood_group, patient.emergency_contact,
-          patient.city, patient.pincode, patient_id)
-    cursor.execute(update_query,values)
-    conn.commit()
-    rows_affected=cursor.rowcount
-    cursor.close()
-    return rows_affected
+    try:
+        
+        update_query="""UPDATE patients SET name=%s,age=%s,gender=%s,email=%s,phone_num=%s,password=%s,active=%s,blood_group=%s,emergency_contact=%s,city=%s,pincode=%s WHERE id=%s """
+        values = (patient_data["name"], patient_data["age"], patient_data["gender"], patient_data["email"], patient_data["phone_num"],
+            patient_data["password"], patient_data["active"], patient_data["blood_group"], patient_data["emergency_contact"],
+            patient_data["city"], patient_data["pincode"], patient_id)
+        cursor.execute(update_query,values)
+        print("Updating patient_id:", patient_id, type(patient_id))
+        print("Values tuple:", values)
+        conn.commit()
+        rows_affected=cursor.rowcount
+        cursor.close()
+        return rows_affected
+    except Exception as e:
+        logger.error(f"Error updating patient with ID {patient_id}: {e}")
+
 #update patient field
 def update_patient_record(conn,patient_id,updated_data):
     existing_data=get_patient(conn,patient_id)
@@ -63,6 +72,7 @@ def update_patient_record(conn,patient_id,updated_data):
     conn.commit()
     cursor.close()
     return get_patient(conn,patient_id)
+
 #delete patient resource
 def delete_patient(conn,patient_id):
     cursor=conn.cursor()

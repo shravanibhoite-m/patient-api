@@ -3,6 +3,7 @@ from mysql.connector import Error
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from logger import logger
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 def db_connection():
     try:
@@ -14,6 +15,7 @@ def db_connection():
         )
         return conn
     except Error as e:
+        logger.error(f"DB connection error: {e}")
         print("DB connection error:", e)
         return None
 
