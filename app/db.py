@@ -3,6 +3,7 @@ from mysql.connector import Error
 import os
 from pathlib import Path
 from dotenv import load_dotenv
+from logger import logger
 load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 def db_connection():
     try:
@@ -14,7 +15,7 @@ def db_connection():
         )
         return conn
     except Error as e:
-        print("DB connection error:", e)
+        logger.error(f"DB connection error: {e}")
         return None
 
 def create_table(conn):
@@ -41,7 +42,7 @@ def create_table(conn):
         cursor.execute(create_table_query)
         cursor.close()
     except Exception as e:
-        print(e)
+        logger.error(f"Error creating table: {e}")
 
 
 if __name__== "__main__":
