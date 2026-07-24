@@ -46,11 +46,8 @@ def update_patient(patient_id:int,patient:PatientCreate):
             raise HTTPException(status_code=404,detail="patient not found")
         logger.info(f"Patient with ID {patient_id} record updated successfully.")
         return get_patient(conn, patient_id)
-    except HTTPException:
-        raise
     except Exception as e:
         logger.error(f"Error updating patient with ID {patient_id}: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/patients/{patient_id}",response_model=PatientOut)
 def update_patient_field(

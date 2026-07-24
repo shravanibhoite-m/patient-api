@@ -16,7 +16,6 @@ def db_connection():
         return conn
     except Error as e:
         logger.error(f"DB connection error: {e}")
-        print("DB connection error:", e)
         return None
 
 def create_table(conn):
@@ -43,7 +42,7 @@ def create_table(conn):
         cursor.execute(create_table_query)
         cursor.close()
     except Exception as e:
-        print(e)
+        logger.error(f"Error creating table: {e}")
 
 
 if __name__== "__main__":

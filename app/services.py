@@ -50,8 +50,6 @@ def updated_patient_resource(conn,patient_id,patient_data):
             patient_data["password"], patient_data["active"], patient_data["blood_group"], patient_data["emergency_contact"],
             patient_data["city"], patient_data["pincode"], patient_id)
         cursor.execute(update_query,values)
-        print("Updating patient_id:", patient_id, type(patient_id))
-        print("Values tuple:", values)
         conn.commit()
         rows_affected=cursor.rowcount
         cursor.close()
